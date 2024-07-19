@@ -1,0 +1,18 @@
+[package]
+name = "polyglot-bot"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+actix-rt = "2.10.0"
+envy = "0.4.2"
+serde = { version = "1.0.204", features = ["derive"] }
+serde_json = "1.0.120"
+reqwest = { version = "0.12.5", features = ["cookies", "json"] }
+teloxide = { version = "0.12", features = ["macros"] }
+tracing = "0.1.40"
+tracing-subscriber = "0.3.18"
+async-trait = "0.1.81"
+base64 = "0.22.1"
+anyhow = "1.0.86"
+bytes = "1.6.1"
