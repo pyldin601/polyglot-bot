@@ -45,8 +45,8 @@ type MyDialogue = Dialogue<State, InMemStorage<State>>;
 #[actix_rt::main]
 async fn main() {
     let config = Config::from_env();
-    let synth = Arc::new(SynthClient::create(&config.ts_api_key));
-    let bot = teloxide::Bot::new(config.tg_bot_token);
+    let synth = SynthClient::create(&config.ts_api_key);
+    let bot = Bot::new(config.tg_bot_token);
 
     Dispatcher::builder(
         bot,
@@ -92,114 +92,87 @@ async fn main() {
                     Ok::<(), anyhow::Error>(())
                 },
             ))
-            .branch(dptree::case![State::ReceiveTextInPortuguese].endpoint({
-                let synth = synth.clone();
-
-                move |bot: Bot, dialogue: MyDialogue, msg: Message| {
-                    let synth = synth.clone();
-
-                    async move {
-                        match msg.text() {
-                            Some(text) => {
-                                let audio = synth.synth(text, &Portuguese).await?;
-                                let bytes = bytes::Bytes::from(audio);
-                                let file = InputFile::memory(bytes);
-                                bot.send_voice(msg.chat.id, file).await?;
-                                dialogue.update(State::Start).await?;
-                            }
-                            None => {
-                                bot.send_message(
-                                    msg.chat.id,
-                                    "Send me a plain text in Portuguese.",
-                                )
+            .branch(dptree::case![State::ReceiveTextInPortuguese].endpoint(
+                |bot: Bot, dialogue: MyDialogue, msg: Message, synth: Arc<SynthClient>| async move {
+                    match msg.text() {
+                        Some(text) => {
+                            let audio = synth.synth(text, &Portuguese).await?;
+                            let bytes = bytes::Bytes::from(audio);
+                            let file = InputFile::memory(bytes);
+                            bot.send_voice(msg.chat.id, file).await?;
+                            dialogue.update(State::Start).await?;
+                        }
+                        None => {
+                            bot.send_message(msg.chat.id, "Send me a plain text in Portuguese.")
                                 .await?;
-                            }
                         }
-
-                        Ok::<(), anyhow::Error>(())
                     }
-                }
-            }))
-            .branch(dptree::case![State::ReceiveTextInPolish].endpoint({
-                let synth = synth.clone();
 
-                move |bot: Bot, dialogue: MyDialogue, msg: Message| {
-                    let synth = synth.clone();
+                    Ok::<(), anyhow::Error>(())
+                },
+            ))
+            .branch(dptree::case![State::ReceiveTextInPolish].endpoint(
+                |bot: Bot, dialogue: MyDialogue, msg: Message, synth: Arc<SynthClient>| async move {
+                    match msg.text() {
+                        Some(text) => {
+                            let audio = synth.synth(text, &Polish).await?;
+                            let bytes = bytes::Bytes::from(audio);
+                            let file = InputFile::memory(bytes);
 
-                    async move {
-                        match msg.text() {
-                            Some(text) => {
-                                let audio = synth.synth(text, &Polish).await?;
-                                let bytes = bytes::Bytes::from(audio);
-                                let file = InputFile::memory(bytes);
-
-                                bot.send_voice(msg.chat.id, file).await?;
-                                dialogue.update(State::Start).await?;
-                            }
-                            None => {
-                                bot.send_message(msg.chat.id, "Send me a plain text in Polish.")
-                                    .await?;
-                            }
+                            bot.send_voice(msg.chat.id, file).await?;
+                            dialogue.update(State::Start).await?;
                         }
-
-                        Ok::<(), anyhow::Error>(())
-                    }
-                }
-            }))
-            .branch(dptree::case![State::ReceiveTextInEnglish].endpoint({
-                let synth = synth.clone();
-
-                move |bot: Bot, dialogue: MyDialogue, msg: Message| {
-                    let synth = synth.clone();
-
-                    async move {
-                        match msg.text() {
-                            Some(text) => {
-                                let audio = synth.synth(text, &English).await?;
-                                let bytes = bytes::Bytes::from(audio);
-                                let file = InputFile::memory(bytes);
-
-                                bot.send_voice(msg.chat.id, file).await?;
-                                dialogue.update(State::Start).await?;
-                            }
-                            None => {
-                                bot.send_message(msg.chat.id, "Send me a plain text in English.")
-                                    .await?;
-                            }
+                        None => {
+                            bot.send_message(msg.chat.id, "Send me a plain text in Polish.")
+                                .await?;
                         }
-
-                        Ok::<(), anyhow::Error>(())
                     }
-                }
-            }))
-            .branch(dptree::case![State::ReceiveTextInSpanish].endpoint({
-                let synth = synth.clone();
 
-                move |bot: Bot, dialogue: MyDialogue, msg: Message| {
-                    let synth = synth.clone();
+                    Ok::<(), anyhow::Error>(())
+                },
+            ))
+            .branch(dptree::case![State::ReceiveTextInEnglish].endpoint(
+                |bot: Bot, dialogue: MyDialogue, msg: Message, synth: Arc<SynthClient>| async move {
+                    match msg.text() {
+                        Some(text) => {
+                            let audio = synth.synth(text, &English).await?;
+                            let bytes = bytes::Bytes::from(audio);
+                            let file = InputFile::memory(bytes);
 
-                    async move {
-                        match msg.text() {
-                            Some(text) => {
-                                let audio = synth.synth(text, &Spanish).await?;
-                                let bytes = bytes::Bytes::from(audio);
-                                let file = InputFile::memory(bytes);
-
-                                bot.send_voice(msg.chat.id, file).await?;
-                                dialogue.update(State::Start).await?;
-                            }
-                            None => {
-                                bot.send_message(msg.chat.id, "Send me a plain text in Spanish.")
-                                    .await?;
-                            }
+                            bot.send_voice(msg.chat.id, file).await?;
+                            dialogue.update(State::Start).await?;
                         }
-
-                        Ok::<(), anyhow::Error>(())
+                        None => {
+                            bot.send_message(msg.chat.id, "Send me a plain text in English.")
+                                .await?;
+                        }
                     }
-                }
-            })),
+
+                    Ok::<(), anyhow::Error>(())
+                },
+            ))
+            .branch(dptree::case![State::ReceiveTextInSpanish].endpoint(
+                |bot: Bot, dialogue: MyDialogue, msg: Message, synth: Arc<SynthClient>| async move {
+                    match msg.text() {
+                        Some(text) => {
+                            let audio = synth.synth(text, &Spanish).await?;
+                            let bytes = bytes::Bytes::from(audio);
+                            let file = InputFile::memory(bytes);
+
+                            bot.send_voice(msg.chat.id, file).await?;
+                            dialogue.update(State::Start).await?;
+                        }
+                        None => {
+                            bot.send_message(msg.chat.id, "Send me a plain text in Spanish.")
+                                .await?;
+                        }
+                    }
+
+                    Ok::<(), anyhow::Error>(())
+                },
+            )),
     )
-    .dependencies(dptree::deps![InMemStorage::<State>::new()])
+    .dependencies(dptree::deps![InMemStorage::<State>::new(), Arc::new(synth)])
     .build()
     .dispatch()
     .await;
