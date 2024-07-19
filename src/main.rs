@@ -70,7 +70,8 @@ async fn main() {
             ))
             .branch(dptree::case![State::Start].endpoint(
                 move |bot: Bot, msg: Message| async move {
-                    bot.send_message(msg.chat.id, "Start").await?;
+                    bot.send_message(msg.chat.id, Command::descriptions().to_string())
+                        .await?;
 
                     Ok::<(), anyhow::Error>(())
                 },
