@@ -6,8 +6,8 @@ Polyglot Bot is a Text-to-Speech (TTS) Telegram bot built using Rust. This bot c
 
 ## Supported languages
 
-- European Portuguese
-- Polish
+- 🇵🇹 European Portuguese
+- 🇵🇱 Polish
 
 ## Installation
 
