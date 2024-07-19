@@ -28,9 +28,9 @@ pub enum State {
 enum Command {
     #[command(description = "display this text.")]
     Help,
-    #[command(description = "speak a text in portuguese.")]
+    #[command(description = "read a text in Portuguese.")]
     Portuguese,
-    #[command(description = "speak a text in polish.")]
+    #[command(description = "read a text in Polish.")]
     Polish,
 }
 
@@ -54,12 +54,12 @@ async fn main() {
                                 .await?;
                         }
                         Command::Portuguese => {
-                            bot.send_message(msg.chat.id, "Send me a plain text in portuguese")
+                            bot.send_message(msg.chat.id, "Send me a plain text in Portuguese.")
                                 .await?;
                             dialogue.update(State::ReceiveTextInPortuguese).await?;
                         }
                         Command::Polish => {
-                            bot.send_message(msg.chat.id, "Send me a plain text in polish")
+                            bot.send_message(msg.chat.id, "Send me a plain text in Polish.")
                                 .await?;
                             dialogue.update(State::ReceiveTextInPolish).await?;
                         }
@@ -92,8 +92,11 @@ async fn main() {
                                 dialogue.update(State::Start).await?;
                             }
                             None => {
-                                bot.send_message(msg.chat.id, "Send me a plain text in portuguese")
-                                    .await?;
+                                bot.send_message(
+                                    msg.chat.id,
+                                    "Send me a plain text in Portuguese.",
+                                )
+                                .await?;
                             }
                         }
 
@@ -118,7 +121,7 @@ async fn main() {
                                 dialogue.update(State::Start).await?;
                             }
                             None => {
-                                bot.send_message(msg.chat.id, "Send me a plain text in polish")
+                                bot.send_message(msg.chat.id, "Send me a plain text in Polish.")
                                     .await?;
                             }
                         }
