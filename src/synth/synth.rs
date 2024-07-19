@@ -1,8 +1,6 @@
 use base64::{Engine as _, engine::general_purpose};
 use serde::Deserialize;
-use serde_json::{json, Value};
-
-use crate::synth::language::{Polish, Portuguese};
+use serde_json::json;
 
 const TTS_ENDPOINT: &str = "https://texttospeech.googleapis.com/v1/text:synthesize";
 
@@ -10,38 +8,6 @@ pub(crate) trait SynthParams {
     fn get_voice(&self) -> serde_json::Value;
 
     fn get_audio_config(&self) -> serde_json::Value;
-}
-
-impl SynthParams for Portuguese {
-    fn get_voice(&self) -> Value {
-        json!({
-            "languageCode": "pt-PT",
-            "name": "pt-PT-Wavenet-C"
-        })
-    }
-
-    fn get_audio_config(&self) -> Value {
-        json!({
-          "audioEncoding": "OGG_OPUS",
-          "speakingRate": 0.8
-        })
-    }
-}
-
-impl SynthParams for Polish {
-    fn get_voice(&self) -> Value {
-        json!({
-            "languageCode": "pl-PL",
-            "name": "pl-PL-Wavenet-B"
-        })
-    }
-
-    fn get_audio_config(&self) -> Value {
-        json!({
-          "audioEncoding": "OGG_OPUS",
-          "speakingRate": 1
-        })
-    }
 }
 
 pub(crate) struct SynthClient {
