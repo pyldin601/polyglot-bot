@@ -22,8 +22,7 @@ impl SynthParams for Portuguese {
 
     fn get_audio_config(&self) -> Value {
         json!({
-          "audioEncoding": "MP3",
-          "pitch": 0,
+          "audioEncoding": "OGG_OPUS",
           "speakingRate": 0.8
         })
     }
@@ -39,8 +38,7 @@ impl SynthParams for Polish {
 
     fn get_audio_config(&self) -> Value {
         json!({
-          "audioEncoding": "MP3",
-          "pitch": 0,
+          "audioEncoding": "OGG_OPUS",
           "speakingRate": 1
         })
     }

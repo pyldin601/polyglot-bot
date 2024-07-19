@@ -87,9 +87,8 @@ async fn main() {
                             Some(text) => {
                                 let audio = synth.synth(text, &Portuguese).await?;
                                 let bytes = bytes::Bytes::from(audio);
-                                let file = InputFile::memory(bytes)
-                                    .file_name(format!("{}.pt.mp3", &text[0..20]));
-                                bot.send_audio(msg.chat.id, file).await?;
+                                let file = InputFile::memory(bytes);
+                                bot.send_voice(msg.chat.id, file).await?;
                                 dialogue.update(State::Start).await?;
                             }
                             None => {
@@ -113,10 +112,9 @@ async fn main() {
                             Some(text) => {
                                 let audio = synth.synth(text, &Polish).await?;
                                 let bytes = bytes::Bytes::from(audio);
-                                let file = InputFile::memory(bytes)
-                                    .file_name(format!("{}.pl.mp3", &text[0..20]));
+                                let file = InputFile::memory(bytes);
 
-                                bot.send_audio(msg.chat.id, file).await?;
+                                bot.send_voice(msg.chat.id, file).await?;
                                 dialogue.update(State::Start).await?;
                             }
                             None => {
