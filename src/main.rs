@@ -58,6 +58,7 @@ async fn main() {
                         Command::Help => {
                             bot.send_message(msg.chat.id, Command::descriptions().to_string())
                                 .await?;
+                            dialogue.update(State::Start).await?;
                         }
                         Command::Portuguese => {
                             bot.send_message(msg.chat.id, "Send me a plain text in Portuguese.")
