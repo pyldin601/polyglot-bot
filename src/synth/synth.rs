@@ -16,7 +16,7 @@ impl SynthParams for Portuguese {
     fn get_voice(&self) -> Value {
         json!({
             "languageCode": "pt-PT",
-            "name": "pt-PT-Wavenet-B"
+            "name": "pt-PT-Wavenet-C"
         })
     }
 
