@@ -6,7 +6,7 @@ use teloxide::types::InputFile;
 use teloxide::utils::command::BotCommands;
 
 use crate::config::Config;
-use crate::synth::language::{Polish, Portuguese};
+use crate::synth::language::{English, Polish, Portuguese, Spanish};
 use crate::synth::synth::SynthClient;
 
 mod config;
@@ -18,6 +18,8 @@ pub enum State {
     Start,
     ReceiveTextInPortuguese,
     ReceiveTextInPolish,
+    ReceiveTextInEnglish,
+    ReceiveTextInSpanish,
 }
 
 #[derive(BotCommands, Clone)]
@@ -32,6 +34,10 @@ enum Command {
     Portuguese,
     #[command(description = "read a text in Polish.")]
     Polish,
+    #[command(description = "read a text in English.")]
+    English,
+    #[command(description = "read a text in Spanish.")]
+    Spanish,
 }
 
 type MyDialogue = Dialogue<State, InMemStorage<State>>;
@@ -62,6 +68,16 @@ async fn main() {
                             bot.send_message(msg.chat.id, "Send me a plain text in Polish.")
                                 .await?;
                             dialogue.update(State::ReceiveTextInPolish).await?;
+                        }
+                        Command::English => {
+                            bot.send_message(msg.chat.id, "Send me a plain text in English.")
+                                .await?;
+                            dialogue.update(State::ReceiveTextInEnglish).await?;
+                        }
+                        Command::Spanish => {
+                            bot.send_message(msg.chat.id, "Send me a plain text in Spanish.")
+                                .await?;
+                            dialogue.update(State::ReceiveTextInSpanish).await?;
                         }
                     }
 
@@ -122,6 +138,58 @@ async fn main() {
                             }
                             None => {
                                 bot.send_message(msg.chat.id, "Send me a plain text in Polish.")
+                                    .await?;
+                            }
+                        }
+
+                        Ok::<(), anyhow::Error>(())
+                    }
+                }
+            }))
+            .branch(dptree::case![State::ReceiveTextInEnglish].endpoint({
+                let synth = synth.clone();
+
+                move |bot: Bot, dialogue: MyDialogue, msg: Message| {
+                    let synth = synth.clone();
+
+                    async move {
+                        match msg.text() {
+                            Some(text) => {
+                                let audio = synth.synth(text, &English).await?;
+                                let bytes = bytes::Bytes::from(audio);
+                                let file = InputFile::memory(bytes);
+
+                                bot.send_voice(msg.chat.id, file).await?;
+                                dialogue.update(State::Start).await?;
+                            }
+                            None => {
+                                bot.send_message(msg.chat.id, "Send me a plain text in English.")
+                                    .await?;
+                            }
+                        }
+
+                        Ok::<(), anyhow::Error>(())
+                    }
+                }
+            }))
+            .branch(dptree::case![State::ReceiveTextInSpanish].endpoint({
+                let synth = synth.clone();
+
+                move |bot: Bot, dialogue: MyDialogue, msg: Message| {
+                    let synth = synth.clone();
+
+                    async move {
+                        match msg.text() {
+                            Some(text) => {
+                                let audio = synth.synth(text, &Spanish).await?;
+                                let bytes = bytes::Bytes::from(audio);
+                                let file = InputFile::memory(bytes);
+
+                                bot.send_voice(msg.chat.id, file).await?;
+                                dialogue.update(State::Start).await?;
+                            }
+                            None => {
+                                bot.send_message(msg.chat.id, "Send me a plain text in Spanish.")
                                     .await?;
                             }
                         }
