@@ -11,6 +11,7 @@ various languages and sends the audio back to the user in the Telegram chat.
 - 🇵🇱 Polish
 - 🇬🇧 English
 - 🇪🇸 Spanish
+- 🇮‍🇹 Italian
 
 ## Installation
 
@@ -46,6 +47,7 @@ various languages and sends the audio back to the user in the Telegram chat.
     - `/polish` — Read a text in Polish.
     - `/english` — Read a text in English.
     - `/spanish` — Read a text in Spanish.
+    - `/italian` — Read a text in Italian.
 
 ## Contributing
 
