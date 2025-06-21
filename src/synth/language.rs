@@ -107,11 +107,37 @@ impl SynthParams for Spanish {
 }
 
 #[derive(Clone)]
+pub(crate) struct Italian;
+
+impl LanguageMeta for Italian {
+    fn get_name(&self) -> &'static str {
+        "Italian"
+    }
+}
+
+impl SynthParams for Italian {
+    fn get_voice(&self) -> Value {
+        json!({
+            "languageCode": "it-IT",
+            "name": "it-IT-Chirp3-HD-Zephyr"
+        })
+    }
+
+    fn get_audio_config(&self) -> Value {
+        json!({
+          "audioEncoding": "OGG_OPUS",
+          "speakingRate": 1
+        })
+    }
+}
+
+#[derive(Clone)]
 pub(crate) enum Language {
     Polish(Polish),
     Portuguese(Portuguese),
     English(English),
     Spanish(Spanish),
+    Italian(Italian),
 }
 
 impl LanguageMeta for Language {
@@ -121,6 +147,7 @@ impl LanguageMeta for Language {
             Language::Portuguese(lang) => lang.get_name(),
             Language::English(lang) => lang.get_name(),
             Language::Spanish(lang) => lang.get_name(),
+            Language::Italian(lang) => lang.get_name(),
         }
     }
 }
@@ -132,6 +159,7 @@ impl SynthParams for Language {
             Language::Portuguese(params) => params.get_voice(),
             Language::English(params) => params.get_voice(),
             Language::Spanish(params) => params.get_voice(),
+            Language::Italian(params) => params.get_voice(),
         }
     }
 
@@ -141,6 +169,7 @@ impl SynthParams for Language {
             Language::Portuguese(params) => params.get_audio_config(),
             Language::English(params) => params.get_audio_config(),
             Language::Spanish(params) => params.get_audio_config(),
+            Language::Italian(params) => params.get_audio_config(),
         }
     }
 }

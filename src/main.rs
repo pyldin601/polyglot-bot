@@ -6,7 +6,9 @@ use teloxide::types::InputFile;
 use teloxide::utils::command::BotCommands;
 
 use crate::config::Config;
-use crate::synth::language::{English, Language, LanguageMeta, Polish, Portuguese, Spanish};
+use crate::synth::language::{
+    English, Italian, Language, LanguageMeta, Polish, Portuguese, Spanish,
+};
 use crate::synth::synth::SynthClient;
 
 mod config;
@@ -35,6 +37,8 @@ enum Command {
     English,
     #[command(description = "read a text in Spanish.")]
     Spanish,
+    #[command(description = "read a text in Italian.")]
+    Italian,
 }
 
 type MyDialogue = Dialogue<State, InMemStorage<State>>;
@@ -62,6 +66,7 @@ async fn main() {
                         Command::Polish => Language::Polish(Polish),
                         Command::English => Language::English(English),
                         Command::Spanish => Language::Spanish(Spanish),
+                        Command::Italian => Language::Italian(Italian),
                     };
 
                     bot.send_message(
