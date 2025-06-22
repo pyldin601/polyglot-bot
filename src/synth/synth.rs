@@ -1,4 +1,4 @@
-use base64::{Engine as _, engine::general_purpose};
+use base64::{engine::general_purpose, Engine as _};
 use serde::Deserialize;
 use serde_json::json;
 
@@ -39,12 +39,14 @@ impl SynthClient {
             audio_content: String,
         }
 
+        let text_single_line = text.replace('\n', "");
+
         let r = self
             .client
             .post(TTS_ENDPOINT)
             .query(&json!({ "key": self.ts_api_key }))
             .json(&json!({
-                "input": { "text": text },
+                "input": { "text": text_single_line },
                 "voice": voice,
                 "audioConfig": audio_config
             }))
