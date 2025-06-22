@@ -10,9 +10,11 @@ use crate::synth::language::{
     English, Italian, Language, LanguageMeta, Polish, Portuguese, Spanish,
 };
 use crate::synth::synth::SynthClient;
+use crate::text::split_text_into_chunks;
 
 mod config;
 mod synth;
+mod text;
 
 #[derive(Clone, Default)]
 enum State {
@@ -95,7 +97,16 @@ async fn main() {
                  synth: Arc<SynthClient>| async move {
                     match msg.text() {
                         Some(text) => {
-                            let audio = synth.synth(text, &lang).await?;
+                            let chunks = split_text_into_chunks(text, 5000);
+
+                            let mut audio = vec![];
+
+                            for chunk in chunks {
+                                eprintln!("Recording chunk...");
+                                let sentence_audio = synth.synth(&chunk, &lang).await?;
+                                audio.extend(sentence_audio);
+                            }
+
                             let bytes = bytes::Bytes::from(audio);
                             let file = InputFile::memory(bytes);
                             bot.send_voice(msg.chat.id, file).await?;
