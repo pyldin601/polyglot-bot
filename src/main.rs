@@ -115,6 +115,9 @@ async fn main() {
             )),
     )
     .dependencies(dptree::deps![InMemStorage::<State>::new(), Arc::new(synth)])
+    .error_handler(Arc::new(|err| async move {
+        eprintln!("Dispatcher error: {:?}", err);
+    }))
     .build()
     .dispatch()
     .await;
