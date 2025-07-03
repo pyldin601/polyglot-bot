@@ -1,4 +1,4 @@
-FROM rust:1.79.0
+FROM rust:1.88.0
 
 WORKDIR /code
 
@@ -12,7 +12,7 @@ RUN \
     mv target/*/polyglot-bot polyglot-bot && \
     rm -rf target
 
-FROM rust:1.79.0
+FROM rust:1.88.0
 
 COPY --from=0 /code/polyglot-bot /polyglot-bot
 
